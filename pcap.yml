@@ -1,0 +1,27 @@
+---
+- name: Extract Executable from PCAP using tcpdump
+  hosts: remote_servers
+  become: yes
+  tasks:
+    - name: Install tcpflow
+      become: yes
+      package:
+        name: tcpflow
+        state: present
+
+    - name: Collect PCAP file
+      ansible.builtin.fetch:
+        src: /home/sempaynado/Desktop/captured_pcap.pcap
+        dest: /home/sempaynado/HOA8/
+        flat: yes
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+
+    - name: Extract potential executables using tcpflow
+      command: "tcpflow -r /home/sempaynado/HOA8/captured_pcap.pcap -o /home/sempaynado/HOA8/log"
+      args:
+        creates: /home/sempaynado/HOA8/collected.exe
+
